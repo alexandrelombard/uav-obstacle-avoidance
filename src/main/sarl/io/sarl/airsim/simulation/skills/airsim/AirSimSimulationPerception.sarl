@@ -1,0 +1,44 @@
+package io.sarl.airsim.simulation.skills.airsim
+
+import io.sarl.airsim.simulation.capacities.SimulationPerceptionCapacity
+import fr.utbm.airsim.api.Pose
+import fr.utbm.airsim.api.CollisionInfo
+import fr.utbm.airsim.api.KinematicsState
+import org.msgpack.rpc.loop.EventLoop
+import org.msgpack.rpc.Client
+import fr.utbm.airsim.api.RpcLibClientBase
+
+skill AirSimSimulationPerception implements SimulationPerceptionCapacity {
+
+	val loop = EventLoop.defaultEventLoop()
+	val rpcClient : Client
+	val rpcLibClient : RpcLibClientBase
+	
+	new() {
+		this("127.0.0.1", 41451)		
+	} 
+	
+	new(ipAddress: String, port: Integer) {
+		rpcClient = new Client(ipAddress, port, loop)
+		rpcLibClient = rpcClient.proxy(typeof(RpcLibClientBase)) 
+	}
+
+	def simGetObjectPose(objectName : String) : Pose {
+		synchronized (this.rpcLibClient) {
+			return rpcLibClient.simGetObjectPose(objectName)
+		}
+	}
+	
+	def simGetCollisionInfo(vehicleName : String) : CollisionInfo {
+		synchronized (this.rpcLibClient) {
+			return rpcLibClient.simGetCollisionInfo(vehicleName)
+		}
+	}
+	
+	def simGetGroundTruthKinematics(vehicleName : String) : KinematicsState {
+		synchronized (this.rpcLibClient) {
+			return rpcLibClient.simGetGroundTruthKinematics(vehicleName)
+		}
+	}
+	
+}

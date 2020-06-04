@@ -1,0 +1,56 @@
+/** 
+ * 
+ */
+package io.sarl.airsim
+
+import io.sarl.airsim.math.Vector3
+import io.sarl.core.DefaultContextInteractions
+import io.sarl.core.Initialize
+import io.sarl.core.Lifecycle
+import io.sarl.core.Logging
+import java.io.FileReader
+import java.util.List
+import java.util.UUID
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
+
+/** 
+ * Agent in charge of starting the other agents (initial state)
+ * @author Alexandre Lombard
+ * 
+ */
+@SuppressWarnings("discouraged_reference")
+agent BootAgent {
+	uses Lifecycle, Logging, DefaultContextInteractions
+	
+	/** The total number of agents to spawn */
+	val agentToSpawn = 8
+	val paramFilePath = Main.paramFileDirectory + "startDestinations.json"
+
+	var data : JSONObject
+	var UUID_ID = <UUID>newLinkedList();
+	
+	on Initialize {
+
+		var reader = new FileReader(this.paramFilePath)
+		var jsonParser = new JSONParser()
+		this.data = jsonParser.parse(reader) as JSONObject
+		
+		// Run the drone spawning strategy
+		runSpawnStrategy()
+		
+		// Spawn the simulation controller agent
+		spawn(SimulationControllerAgent, this.agentToSpawn)
+	}
+	
+	def runSpawnStrategy() {
+		info("Run Spawn Strategy")
+		Thread.sleep(2000)
+		
+		for (var idx = 0; idx < agentToSpawn; idx++) {
+			val spawnPoint = this.data.get("S" + idx) as List<Long>
+			UUID_ID.add(spawn(DroneAgent, idx, new Vector3(spawnPoint.get(0).toFloat(), spawnPoint.get(1).toFloat(), spawnPoint.get(2).toFloat())))
+			Thread.sleep((1500 * Math.random()).intValue)
+		}
+	}
+}

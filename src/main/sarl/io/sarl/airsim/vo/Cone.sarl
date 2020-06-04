@@ -1,0 +1,40 @@
+/** 
+ * 
+ */
+package io.sarl.airsim.vo
+
+import io.sarl.airsim.math.Vector3
+
+/** 
+ * A Cone represent a Velocity Obstacle
+ * @author Lilian Durand
+ * 
+ */
+class Cone extends Object {
+	//Radius on base
+	var radius : float
+	//Direction from the top of cone to the center of the base
+	var dir : Vector3
+	var height : float
+	//Top of the cone
+	var origin : Vector3
+	
+	new (origin : Vector3, t1 : Vector3, t2 : Vector3){
+		this.origin = origin
+		var t1mt2 = t1-t2
+		this.radius = t1mt2.norm/2
+		this.dir = t2+t1mt2*0.5f-origin
+		this.height = this.dir.norm
+		//Normalize direction vector
+		this.dir *= 1.0f/this.height
+	}
+	
+	//Return true if point p is inside the cone, false otherwise
+	def isPointIn(p : Vector3) : boolean{
+		var cone_dist = (p-this.origin).dot(this.dir)
+		var cone_radius = (cone_dist*1/this.height)*this.radius
+		var orth_dist = ((p-this.origin)-this.dir*cone_dist).norm
+		
+		return orth_dist < cone_radius
+	}
+}

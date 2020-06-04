@@ -1,0 +1,74 @@
+/** 
+ * 
+ */
+package io.sarl.airsim.behaviors.avoidance
+
+import io.sarl.airsim.communication.NotifyPose
+import io.sarl.core.Logging
+import io.sarl.airsim.communication.NotifyKinematics
+import io.sarl.airsim.perceptions.sim.SimPosePerception
+import io.sarl.core.DefaultContextInteractions
+import io.sarl.airsim.perceptions.sim.SimGroundTruthKinematicsPerception
+import io.sarl.core.Initialize
+import io.sarl.airsim.influences.Takeoff
+import io.sarl.core.Schedules
+import io.sarl.airsim.influences.MoveByVelocity
+
+/** 
+ * @author Alexandre Lombard
+ * 
+ */
+behavior ObstacleAvoidanceDroneBehavior {
+	uses Logging, DefaultContextInteractions, Schedules
+	
+	private val periodMs = 500	// The period of decision of the drone
+
+	on Initialize {
+		info("Drone agent is starting...")
+
+		// Note: before the takeoff, the drone is not affected
+		emit(new Takeoff)
+
+		in(2000) [					// Start is delayed
+			every(periodMs) [			// Then a decision is taken at every "periodMs"
+				// TODO Compute the desired velocity for the drone: 
+				emit(new MoveByVelocity(0.0f, 0.0f, 0.0f, periodMs / 1000.0f))
+			]
+		]
+	}
+	
+
+	// Event received when the drone is receiving its own position
+	on SimPosePerception {
+		// TODO Manage the position
+		
+		// We can emit our position to the other drones so they would be able to know where we are:
+		emit(new NotifyPose(occurrence.pose))
+	}
+	
+	on SimGroundTruthKinematicsPerception {
+		// TODO Manage the kinematics state
+		
+		// We can emit our kinematics state to the other drones so they would be able to know where we go:
+		emit(new NotifyKinematics(occurrence.state))
+	}
+
+	// Event received when another drone is communicating its position
+	on NotifyPose [!isMe(occurrence.source)] {
+		val source = occurrence.source
+		val position = occurrence.pose.position
+		val orientation = occurrence.pose.orientation
+		
+		// TODO Manage the other drone position
+	}
+
+	// Event received when another drone is communicating its speed
+	on NotifyKinematics [!isMe(occurrence.source)] {
+		val source = occurrence.source
+		val linearVelocity= occurrence.state.linearVelocity
+		val angularVelocity = occurrence.state.angularVelocity
+		
+	}
+	
+	
+}

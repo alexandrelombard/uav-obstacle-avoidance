@@ -1,0 +1,30 @@
+package io.sarl.airsim.simulation.skills.airsim
+
+import fr.utbm.airsim.api.MultirotorClientInterface
+import fr.utbm.airsim.api.MultirotorState
+import io.sarl.airsim.simulation.capacities.MultirotorSimulationPerceptionCapacity
+import org.msgpack.rpc.Client
+import org.msgpack.rpc.loop.EventLoop
+
+skill AirSimMultirotorSimulationPerception implements MultirotorSimulationPerceptionCapacity {
+
+	val loop = EventLoop.defaultEventLoop()
+	val rpcClient : Client
+	val rpcLibClient : MultirotorClientInterface
+
+	new() {
+		this("127.0.0.1", 41451)
+	}
+
+	new(ipAddress : String, port : Integer) {
+		rpcClient = new Client(ipAddress, port, loop)
+		rpcLibClient = rpcClient.proxy(typeof(MultirotorClientInterface))
+	}
+	
+	override getMultirotorState(vehicleName : String) : MultirotorState {
+		synchronized (this.rpcLibClient) {
+			return this.rpcLibClient.getMultirotorState(vehicleName)
+		}
+	}
+	
+}

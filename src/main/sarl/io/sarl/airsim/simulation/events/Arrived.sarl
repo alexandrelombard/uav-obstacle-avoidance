@@ -1,0 +1,10 @@
+/** 
+ * 
+ */
+package io.sarl.airsim.simulation.events
+
+/** 
+ * @author ciad
+ * 
+ */
+event Arrived

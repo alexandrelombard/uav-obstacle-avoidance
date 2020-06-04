@@ -1,0 +1,63 @@
+/** 
+ * 
+ */
+package io.sarl.airsim.simulation.skills.airsim
+
+import fr.utbm.airsim.api.RpcLibClientBase
+import io.sarl.airsim.simulation.capacities.SimulationControlCapacity
+import org.msgpack.rpc.Client
+import org.msgpack.rpc.loop.EventLoop
+
+/** 
+ * Simulation control capacity relying on AirSim
+ * @author Alexandre Lombard
+ * 
+ */
+skill AirSimSimulationControl implements SimulationControlCapacity {
+
+	val loop = EventLoop.defaultEventLoop()
+	val rpcClient : Client
+	val rpcLibClient : RpcLibClientBase
+
+	new() {
+		this("127.0.0.1", 41451)
+	}
+
+	new(ipAddress : String, port : Integer) {
+		rpcClient = new Client(ipAddress, port, loop)
+		rpcLibClient = rpcClient.proxy(typeof(RpcLibClientBase))
+	}
+
+	def install {
+		//
+	}
+
+	def uninstall {
+		//
+	}
+
+	override simContinueForTime(time : Float) {
+		synchronized (rpcLibClient) {
+			rpcLibClient.simContinueForTime(time)	
+		}
+	}
+	
+	override simPause(pause : Boolean) {
+		synchronized (rpcLibClient) {
+			rpcLibClient.simPause(pause)	
+		}
+	}
+	
+	override simIsPaused : Boolean {
+		synchronized (rpcLibClient) {
+			return rpcLibClient.simIsPaused	
+		}
+	}
+	
+	override simPrintLogMessage(message : String, messageParam : String, severity : Integer = 0) {
+		synchronized (rpcLibClient) {
+			rpcLibClient.simPrintLogMessage(message, messageParam, severity)
+		}
+	}
+	
+}
