@@ -1,0 +1,111 @@
+{
+    "SimMode": "Multirotor",
+	"LogMessagesVisible": true,
+	"ViewMode": "Manual",
+    "SettingsVersion": 1.2,
+    "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+    "OriginGeopoint": {
+        "Latitude": 47.641468,
+        "Longitude": 6.140165,
+        "Altitude": 310
+    },
+    "DefaultSensors": {
+        "Barometer": {
+            "SensorType": 1,
+            "Enabled": true
+        },
+        "IMU": {
+            "SensorType": 2,
+            "Enabled": true
+        },
+        "Gps": {
+            "SensorType": 3,
+            "Enabled": true
+        },
+        "Lidar": {
+            "SensorType": 6,
+            "Enabled": true,
+            "NumberOfChannels": 1,
+            "RotationsPerSecond": 10,
+            "PointsPerSecond": 360,
+            "X": 0,
+            "Y": 0,
+            "Z": -1,
+            "DrawDebugPoints": true
+        }
+    },
+    "Vehicles": {
+        "S0": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": 9,
+            "Y": 4,
+            "Z": -4,
+            "Yaw": 180
+        },
+        "S1": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": 4,
+            "Y": 9,
+            "Z": -4,
+            "Yaw": 180
+        },
+        "S2": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": 0,
+            "Y": 4,
+            "Z": -4,
+            "Yaw": 180
+        },
+        "S3": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": 4,
+            "Y": 0,
+            "Z": -4,
+            "Yaw": 180
+        },
+        "S4": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": 4,
+            "Y": 1,
+            "Z": -1,
+            "Yaw": 180
+        },
+        "S5": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": 10,
+            "Y": 7,
+            "Z": -7,
+            "Yaw": 180
+        },
+        "S6": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": -1,
+            "Y": 1,
+            "Z": -1,
+            "Yaw": 180
+        },
+        "S7": {
+            "VehicleType": "SimpleFlight",
+            "AutoCreate": true,
+            "AllowAPIAlways": true,
+            "X": 4,
+            "Y": 7,
+            "Z": -7,
+            "Yaw": 180
+        }
+    }
+}
