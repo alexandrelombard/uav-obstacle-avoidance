@@ -7,8 +7,10 @@ Example of usage of the AirSim simulation environment with SARL agents.
 Installation of AirSim:
 - Follow the instructions at: https://github.com/microsoft/AirSim
 
-Installation of airsim-jvm-api:
+Installation of Eclipse SARL:
+- Follow the instructions at: http://www.sarl.io/
 
+Installation of airsim-jvm-api:
 - git clone https://github.com/alexandrelombard/airsim-jvm-api
 - cd airsim-jvm-api
 - ./gradlew install
@@ -16,6 +18,7 @@ Installation of airsim-jvm-api:
 Fetching this repository:
 - git clone https://github.com/alexandrelombard/uav-obstacle-avoidance.git
 - mvn install _to check if this works_
+- Open the repository using Eclipse SARL
 
 When AirSim is launched a _settings.json_ file is used to set-up the simulation. It is located in "My Documents/AirSim/settings.json" on Windows.
 An example of settings.json is provided in this repository.
