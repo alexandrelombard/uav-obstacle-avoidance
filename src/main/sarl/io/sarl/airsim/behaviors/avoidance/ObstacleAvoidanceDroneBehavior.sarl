@@ -13,6 +13,13 @@ import io.sarl.core.Initialize
 import io.sarl.airsim.influences.Takeoff
 import io.sarl.core.Schedules
 import io.sarl.airsim.influences.MoveByVelocity
+import java.util.concurrent.ConcurrentHashMap
+import io.sarl.lang.core.Address
+import io.sarl.airsim.behaviors.target.ExternalDroneState
+import fr.utbm.airsim.api.Pose
+import fr.utbm.airsim.api.KinematicsState
+import io.sarl.airsim.math.Vector3
+import fr.utbm.airsim.api.Vector3r
 
 /** 
  * @author Alexandre Lombard
@@ -21,7 +28,13 @@ import io.sarl.airsim.influences.MoveByVelocity
 behavior ObstacleAvoidanceDroneBehavior {
 	uses Logging, DefaultContextInteractions, Schedules
 	
-	private val periodMs = 500	// The period of decision of the drone
+	private val periodMs = 500 // The period of decision of the drone
+	private val neighbours = new ConcurrentHashMap<Address, ExternalDroneState>
+
+	private var target : Vector3 = null
+	
+	private var currentPose : Pose = null
+	private var currentKinematicsState : KinematicsState = null
 
 	on Initialize {
 		info("Drone agent is starting...")
@@ -40,6 +53,10 @@ behavior ObstacleAvoidanceDroneBehavior {
 
 	// Event received when the drone is receiving its own position
 	on SimPosePerception {
+		synchronized(this) {
+			this.currentPose = occurrence.pose
+		}
+		
 		// TODO Manage the position
 		
 		// We can emit our position to the other drones so they would be able to know where we are:
@@ -47,6 +64,10 @@ behavior ObstacleAvoidanceDroneBehavior {
 	}
 	
 	on SimGroundTruthKinematicsPerception {
+		synchronized (this) {
+			this.currentKinematicsState = occurrence.state
+		}
+		
 		// TODO Manage the kinematics state
 		
 		// We can emit our kinematics state to the other drones so they would be able to know where we go:
@@ -58,6 +79,13 @@ behavior ObstacleAvoidanceDroneBehavior {
 		val source = occurrence.source
 		val position = occurrence.pose.position
 		val orientation = occurrence.pose.orientation
+
+		if (this.neighbours.containsKey(source)) {
+			this.neighbours.put(source,
+				new ExternalDroneState(this.neighbours.get(source), occurrence.pose))
+		} else {
+			this.neighbours.put(source, new ExternalDroneState(occurrence.pose, null))
+		}
 		
 		// TODO Manage the other drone position
 	}
@@ -67,8 +95,37 @@ behavior ObstacleAvoidanceDroneBehavior {
 		val source = occurrence.source
 		val linearVelocity= occurrence.state.linearVelocity
 		val angularVelocity = occurrence.state.angularVelocity
-		
+
+		if (this.neighbours.containsKey(source)) {
+			this.neighbours.put(source,
+				new ExternalDroneState(this.neighbours.get(source), occurrence.state))
+		} else {
+			val nullPose : Pose = null
+			this.neighbours.put(source, new ExternalDroneState(nullPose, occurrence.state))
+		}
+
+		// TODO Manage the other drone kinematics state
 	}
 	
+	def computePotentialField() {
+		var f = new Vector3()
+		
+		synchronized (this) {
+			this.neighbours.values.forEach [ s |
+				val p0_ = this.currentPose.position
+				val eta_ij = 1.0
+				val p_ij = s.pose.position.minus(this.currentPose.position)
+				val norm_p_ij = p_ij.length()
+				
+				val p_ig = this.currentPose.position.minus(this.target.toVector3r)
+			]
+		}
+		
+		return f
+	}
+	
+	def toVector3r(v: Vector3) {
+		return new Vector3r(v.x, v.y, v.z)
+	}
 	
 }
