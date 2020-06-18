@@ -124,6 +124,21 @@ behavior ObstacleAvoidanceDroneBehavior {
 		return f
 	}
 	
+	def computeTargetTrackingField() {
+		var u = new Vector3()
+		
+		val zeta_i = 1.0
+		val kappa_i = 1.0
+
+		val p_ig = this.currentPose.position.minus(this.target.toVector3r)
+		val norm_p_ig = p_ig.length()
+		
+		val v_ig = this.currentKinematicsState.linearVelocity
+		val norm_v_ig = v_ig.length()
+		
+		return u
+	}
+	
 	def toVector3r(v: Vector3) {
 		return new Vector3r(v.x, v.y, v.z)
 	}
